@@ -1,0 +1,728 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0a0714">
+<title>连山会 · 查理苏调查档案</title>
+<style>
+  :root{
+    --bg:#08060f;
+    --panel:rgba(28,22,50,.68);
+    --line:rgba(190,175,240,.22);
+    --line-strong:rgba(190,175,240,.42);
+    --silver:#d8d1ef;
+    --muted:#9b91c2;
+    --purple:#8b6ef5;
+    --purple-2:#a57cff;
+    --hot:#ff4d6d;
+    --amber:#f4b860;
+    --font-cn:"FangSong","STFangsong","仿宋","华文仿宋",serif;
+    --font-tech:"FangSong","STFangsong","Georgia","Times New Roman",serif;
+    --font-mono:"FangSong","STFangsong","Courier New",monospace;
+  }
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  html,body{margin:0;height:100%}
+  body{
+    font-family:var(--font-cn);
+    color:#eae5f8;
+    background:var(--bg);
+    overflow-x:hidden;
+    min-height:100vh;
+  }
+  body::before{
+    content:"";position:fixed;inset:0;z-index:-2;
+    background:
+      radial-gradient(900px 620px at 82% -8%, rgba(138,106,245,.30), transparent 62%),
+      radial-gradient(820px 620px at -12% 108%, rgba(122,102,224,.24), transparent 62%),
+      radial-gradient(560px 460px at 50% 55%, rgba(84,60,150,.18), transparent 70%),
+      linear-gradient(158deg,#0b0716 0%,#141021 48%,#0a0816 100%);
+  }
+  body::after{
+    content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;opacity:.5;
+    background-image:
+      linear-gradient(rgba(255,255,255,.026) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255,255,255,.026) 1px, transparent 1px);
+    background-size:36px 36px;
+    -webkit-mask-image:radial-gradient(120% 90% at 50% 0%, #000 30%, transparent 100%);
+            mask-image:radial-gradient(120% 90% at 50% 0%, #000 30%, transparent 100%);
+  }
+  #fx{position:fixed;inset:0;z-index:-1;pointer-events:none}
+
+  .stage{
+    position:relative;width:min(100%,480px);margin:0 auto;min-height:100vh;
+    padding:max(26px, env(safe-area-inset-top)) 20px 54px;
+    display:flex;flex-direction:column;
+  }
+  .screen{display:none;flex-direction:column;min-height:100vh;justify-content:center}
+  .screen.active{display:flex;animation:screenIn .65s cubic-bezier(.2,.7,.3,1) both}
+  @keyframes screenIn{from{opacity:0;transform:translateY(16px) scale(.985)}to{opacity:1;transform:none}}
+
+  .emblem{
+    width:112px;height:112px;margin:0 auto 20px;
+    filter:drop-shadow(0 0 22px rgba(150,120,255,.35));
+    animation:floaty 5.5s ease-in-out infinite;
+  }
+  .emblem.small{width:46px;height:46px;margin:0;animation:floaty 5s ease-in-out infinite}
+  .emblem svg,.emblem use{width:100%;height:100%;display:block}
+
+  /* ---- 入口页 ---- */
+  .kicker{
+    margin:0 0 10px;text-align:center;font-size:12px;letter-spacing:.34em;
+    color:var(--muted);text-transform:uppercase;
+  }
+  .subject-name{text-align:center;margin:0}
+  .subject-name .en{
+    display:block;font-family:var(--font-tech);font-weight:200;
+    font-size:clamp(58px,19vw,98px);line-height:.98;letter-spacing:.10em;
+    background:linear-gradient(115deg,#f7f4ff 0%,#c7bdec 34%,#9b79f2 62%,#e9e4f8 100%);
+    -webkit-background-clip:text;background-clip:text;color:transparent;
+    filter:drop-shadow(0 0 26px rgba(150,120,240,.35));
+  }
+  .subject-name .cn{
+    display:block;margin-top:12px;font-size:clamp(30px,9vw,44px);
+    letter-spacing:.30em;font-weight:500;color:#f0ebff;
+    text-shadow:0 0 24px rgba(160,130,250,.35);
+  }
+  .subject-meta{
+    margin:18px 0 34px;text-align:center;font-family:var(--font-mono);
+    font-size:11px;letter-spacing:.22em;color:#9a8fc4;
+  }
+  .hint-line{margin:18px 0 0;text-align:center;font-size:11px;letter-spacing:.18em;color:#6f6593}
+
+  /* ---- 按钮 ---- */
+  .btn{
+    position:relative;display:inline-flex;align-items:center;justify-content:center;gap:10px;
+    width:100%;padding:15px 30px;border:1px solid var(--line-strong);border-radius:999px;
+    font-family:var(--font-cn);font-size:16px;letter-spacing:.24em;color:#f1edff;
+    background:linear-gradient(120deg, rgba(120,95,220,.26), rgba(78,58,158,.12));
+    cursor:pointer;overflow:hidden;transition:transform .25s ease, box-shadow .25s ease, border-color .25s ease;
+  }
+  .btn:active{transform:scale(.975)}
+  .btn::after{
+    content:"";position:absolute;top:0;left:-80%;width:50%;height:100%;
+    background:linear-gradient(100deg,transparent,rgba(255,255,255,.28),transparent);
+    transform:skewX(-18deg);transition:left .6s ease;
+  }
+  .btn:hover::after{left:130%}
+  .btn-primary{
+    border-color:rgba(255,255,255,.28);
+    background:linear-gradient(120deg,#8b6ef5,#6d4bd8 55%,#a57cff);
+    box-shadow:0 12px 34px rgba(120,90,230,.38), inset 0 1px 0 rgba(255,255,255,.22);
+  }
+  .btn-ghost{
+    margin-top:14px;width:auto;align-self:center;padding:11px 26px;font-size:13px;
+    color:var(--muted);border-color:rgba(190,175,240,.22);background:transparent;
+  }
+
+  /* ---- 口令页 ---- */
+  .auth-head{display:flex;flex-direction:column;align-items:center;text-align:center}
+  .auth-head h2{margin:16px 0 6px;font-size:24px;letter-spacing:.32em;font-weight:500;color:#f1edff}
+  .auth-head .sub{margin:0 0 26px;font-size:13px;letter-spacing:.12em;color:var(--muted)}
+  .lock{
+    width:60px;height:60px;margin:0 auto 22px;color:#c7bdec;
+    filter:drop-shadow(0 0 14px rgba(150,120,255,.45));
+  }
+  .field{
+    display:flex;align-items:center;gap:8px;padding:4px 10px 4px 20px;
+    border:1px solid var(--line-strong);border-radius:18px;
+    background:rgba(255,255,255,.045);box-shadow:inset 0 1px 0 rgba(255,255,255,.05);
+    transition:border-color .25s ease, box-shadow .25s ease;
+  }
+  .field:focus-within{border-color:var(--purple-2);box-shadow:0 0 0 4px rgba(139,110,245,.14)}
+  .field input{
+    flex:1;min-width:0;background:none;border:0;outline:0;color:#fff;
+    font-family:var(--font-mono);font-size:16px;letter-spacing:.14em;padding:13px 0;
+  }
+  .field input::placeholder{color:#6f6593;letter-spacing:.08em}
+  .eye{background:none;border:0;color:var(--muted);padding:10px;cursor:pointer}
+  .pass-hint{margin:14px 4px 22px;font-size:12px;letter-spacing:.06em;color:#8f84b8;line-height:1.7}
+  .pass-hint b{color:#cfc6ee;font-family:var(--font-mono);font-weight:500}
+  .err{min-height:20px;margin:12px 4px 0;text-align:center;font-size:13px;letter-spacing:.08em;color:var(--hot)}
+  .shake{animation:shake .4s ease}
+  @keyframes shake{0%,100%{transform:translateX(0)}20%{transform:translateX(-9px)}40%{transform:translateX(9px)}60%{transform:translateX(-6px)}80%{transform:translateX(6px)}}
+
+  /* ---- 解密加载 ---- */
+  #loader{
+    position:fixed;inset:0;z-index:50;display:none;align-items:center;justify-content:center;flex-direction:column;
+    background:rgba(9,6,18,.86);backdrop-filter:blur(10px);
+  }
+  #loader.show{display:flex;animation:screenIn .4s ease both}
+  #loader .ring{
+    width:74px;height:74px;border-radius:50%;position:relative;
+    border:2px solid rgba(190,175,240,.18);border-top-color:var(--purple-2);
+    animation:spin 1s linear infinite;box-shadow:0 0 30px rgba(139,110,245,.3);
+  }
+  #loader .emblem{position:absolute;width:44px;height:44px;animation:none}
+  #loader p{margin-top:22px;font-family:var(--font-mono);font-size:12px;letter-spacing:.3em;color:#b7add9}
+  @keyframes spin{to{transform:rotate(360deg)}}
+
+  /* ---- 档案页 ---- */
+  .arch-head{display:flex;align-items:center;gap:12px;margin-bottom:6px}
+  .arch-title-wrap{flex:1}
+  .arch-title{font-size:15px;letter-spacing:.28em;color:#ddd6f3;font-weight:500}
+  .arch-sub{margin-top:3px;font-family:var(--font-mono);font-size:10px;letter-spacing:.2em;color:#7f749f}
+
+  .case-card{position:relative;margin-top:18px;padding:18px 16px 8px}
+  .case-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;padding-bottom:12px;border-bottom:1px dashed var(--line)}
+  .case-no{font-family:var(--font-mono);font-size:12px;letter-spacing:.14em;color:#bdb3dc}
+  .case-no b{color:#efeaff;font-weight:500}
+  .stamp-conf{
+    position:absolute;top:-9px;right:14px;transform:rotate(-7deg);
+    border:2px solid rgba(255,77,109,.85);color:var(--hot);padding:4px 9px;
+    font-size:13px;letter-spacing:.24em;font-weight:700;border-radius:6px;
+    box-shadow:0 0 16px rgba(255,77,109,.28);text-shadow:0 0 8px rgba(255,77,109,.5);
+    background:rgba(255,77,109,.06);
+  }
+
+  .card{
+    position:relative;border:1px solid var(--line);border-radius:22px;
+    background:linear-gradient(160deg, rgba(31,25,56,.72), rgba(19,15,36,.62));
+    backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
+    box-shadow:inset 0 1px 0 rgba(255,255,255,.06), 0 18px 44px rgba(0,0,0,.36);
+    overflow:hidden;
+  }
+  .card::before{
+    content:"";position:absolute;inset:0;border-radius:inherit;padding:1px;pointer-events:none;
+    background:linear-gradient(140deg, rgba(190,175,240,.4), transparent 32%, transparent 70%, rgba(139,110,245,.28));
+    -webkit-mask:linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+    -webkit-mask-composite:xor;mask-composite:exclude;
+  }
+
+  .sec-title{
+    display:flex;align-items:center;gap:10px;margin:24px 3px 12px;
+    font-size:14px;letter-spacing:.22em;color:#cfc6ee;font-weight:500;
+  }
+  .sec-title i{font-style:normal;font-family:var(--font-tech);color:var(--purple-2);font-weight:300}
+  .sec-title::after{content:"";flex:1;height:1px;background:linear-gradient(90deg, rgba(139,110,245,.55), transparent)}
+
+  .photo-card{display:flex;gap:14px;padding:14px}
+  .photo-frame{
+    position:relative;flex:0 0 116px;height:158px;border-radius:16px;overflow:hidden;
+    border:1px solid var(--line-strong);background:
+      radial-gradient(120% 90% at 50% 0%, rgba(120,95,220,.28), transparent 60%), rgba(20,16,38,.7);
+  }
+  .photo-frame img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block}
+  .photo-frame .sil{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:#5b5180}
+  .scan{
+    position:absolute;left:0;right:0;height:34px;top:-34px;
+    background:linear-gradient(180deg,transparent, rgba(139,110,245,.55), transparent);
+    animation:scan 3.2s ease-in-out infinite;
+  }
+  @keyframes scan{0%{top:-36px}60%,100%{top:160px}}
+  .photo-cap{
+    position:absolute;left:0;right:0;bottom:0;padding:6px;text-align:center;
+    font-size:10px;letter-spacing:.16em;color:#9b91c2;background:linear-gradient(180deg,transparent,rgba(8,6,16,.86));
+  }
+  .photo-side{flex:1;display:flex;flex-direction:column;justify-content:center}
+  .photo-side .en{font-family:var(--font-tech);font-size:32px;font-weight:200;letter-spacing:.08em;
+    background:linear-gradient(115deg,#f5f2ff,#a78ef0);-webkit-background-clip:text;background-clip:text;color:transparent}
+  .photo-side .cn{font-size:19px;letter-spacing:.2em;color:#efeaff;margin:4px 0 10px}
+  .tag-row{display:flex;flex-wrap:wrap;gap:7px}
+  .mini-tag{
+    font-size:11px;letter-spacing:.08em;color:#d6cef0;border:1px solid rgba(190,175,240,.28);
+    border-radius:999px;padding:5px 10px;background:rgba(255,255,255,.03)
+  }
+  .mini-tag.hot{color:#ffb3c0;border-color:rgba(255,77,109,.5);background:rgba(255,77,109,.08)}
+
+  .info-card{padding:4px 0}
+  .info-row{
+    display:grid;grid-template-columns:92px 1fr;gap:14px;align-items:baseline;
+    padding:12px 16px;border-bottom:1px dashed rgba(190,175,240,.14);
+  }
+  .info-row:last-child{border-bottom:0}
+  .info-row .k{font-size:12px;letter-spacing:.16em;color:#9287ba}
+  .info-row .v{font-size:14px;line-height:1.7;color:#f0ecfb}
+
+  .hot{color:var(--hot);font-weight:700;text-shadow:0 0 12px rgba(255,77,109,.35)}
+  .amber{color:var(--amber);font-weight:700;text-shadow:0 0 10px rgba(244,184,96,.28)}
+
+  .timeline{position:relative;margin:0 2px;padding:6px 0 6px 20px}
+  .timeline::before{
+    content:"";position:absolute;left:7px;top:14px;bottom:14px;width:1px;
+    background:linear-gradient(180deg, rgba(139,110,245,.7), rgba(139,110,245,.12));
+  }
+  .tl-item{position:relative;padding:0 0 16px 14px}
+  .tl-item:last-child{padding-bottom:4px}
+  .tl-item::before{
+    content:"";position:absolute;left:-19px;top:6px;width:9px;height:9px;border-radius:50%;
+    background:var(--purple);box-shadow:0 0 10px var(--purple);border:2px solid rgba(255,255,255,.28);
+  }
+  .tl-item.now::before{background:var(--hot);box-shadow:0 0 10px var(--hot)}
+  .tl-item .role{font-size:14px;color:#f0ecfb;line-height:1.5}
+  .tl-item .org{font-size:12px;letter-spacing:.06em;color:#9287ba;margin-top:3px;line-height:1.6}
+  .tl-item .tag{
+    display:inline-block;margin-top:6px;font-size:10px;letter-spacing:.14em;color:#b9aef2;
+    border:1px solid rgba(139,110,245,.4);border-radius:999px;padding:3px 9px;background:rgba(139,110,245,.1)
+  }
+  .tl-item .tag.now{color:#ffb3c0;border-color:rgba(255,77,109,.5);background:rgba(255,77,109,.1)}
+
+  .net-wrap{padding:12px 8px 8px}
+  .net{width:100%;max-width:392px;margin:0 auto;display:block}
+  .net .link{stroke:rgba(190,175,240,.34);stroke-width:1;fill:none}
+  .net .link.no-blood{stroke-dasharray:3 5}
+  .net .link.dead{stroke:rgba(255,77,109,.5);stroke-dasharray:3 5}
+  .net .link.pending{stroke:rgba(244,184,96,.55);stroke-dasharray:3 5}
+  .net .node text{fill:#efeaff;font-family:var(--font-cn);text-anchor:middle}
+  .net .node .n-name{font-size:14px;letter-spacing:.06em}
+  .net .node .n-rel{font-size:9px;fill:#9b91c2;letter-spacing:.12em}
+  .net .node .n-status{font-size:9px;letter-spacing:.08em}
+  .net .node circle{fill:rgba(28,22,50,.92);stroke-width:1.2}
+  .net .center circle{fill:url(#nodeC);stroke:url(#nodeStroke);stroke-width:1.6}
+  .net .center .n-name{font-size:16px;font-weight:500}
+  .net .center .n-en{font-family:var(--font-tech);font-size:9px;letter-spacing:.2em;fill:#c7bdec}
+
+  .legend{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;margin:8px 0 2px}
+  .legend span{font-size:10px;letter-spacing:.08em;color:#9287ba}
+  .legend i{display:inline-block;width:14px;height:0;border-top:1.5px solid #a78ef0;vertical-align:middle;margin-right:4px}
+  .legend i.dash{border-top-style:dashed}
+  .legend i.dead{border-color:var(--hot);border-top-style:dashed}
+  .legend i.pending{border-color:var(--amber);border-top-style:dashed}
+
+  .rel-list{display:flex;flex-direction:column}
+  .rel-row{display:flex;align-items:center;gap:12px;padding:12px 16px;border-bottom:1px dashed rgba(190,175,240,.14)}
+  .rel-row:last-child{border-bottom:0}
+  .rel-dot{flex:0 0 10px;height:10px;border-radius:50%;background:var(--purple);box-shadow:0 0 10px var(--purple)}
+  .rel-dot.dead{background:var(--hot);box-shadow:0 0 10px var(--hot)}
+  .rel-dot.pending{background:var(--amber);box-shadow:0 0 10px var(--amber)}
+  .rel-main{flex:1;min-width:0}
+  .rel-name{font-size:14px;color:#f0ecfb}
+  .rel-note{font-size:12px;color:#9287ba;margin-top:2px;line-height:1.55}
+
+  .chips{display:flex;flex-wrap:wrap;gap:10px}
+  .chip{
+    border:1px solid rgba(190,175,240,.3);border-radius:15px;padding:10px 14px;
+    font-size:13px;letter-spacing:.06em;color:#e4def7;background:rgba(255,255,255,.03);
+    transition:transform .25s ease, border-color .25s ease, background .25s ease;
+  }
+  .chip:hover{transform:translateY(-2px);border-color:var(--purple-2);background:rgba(139,110,245,.12)}
+
+  .alert-card{
+    border-color:rgba(255,77,109,.42);
+    background:linear-gradient(160deg, rgba(56,19,33,.58), rgba(24,12,26,.66));
+  }
+  .alert-card::before{
+    background:linear-gradient(140deg, rgba(255,77,109,.5), transparent 36%, transparent 72%, rgba(255,77,109,.3));
+  }
+  .alert-title{display:flex;align-items:center;gap:10px;padding:16px 16px 4px;font-size:15px;letter-spacing:.2em;color:#ffb3c0;font-weight:700}
+  .alert-title .dot{width:8px;height:8px;border-radius:50%;background:var(--hot);box-shadow:0 0 12px var(--hot);animation:pulse 1.4s ease-in-out infinite}
+  @keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
+
+  .foot{margin:30px 0 0;text-align:center;font-family:var(--font-mono);font-size:10px;letter-spacing:.24em;color:#625a85;line-height:2}
+
+  /* 浮动与显现 */
+  .float{animation:floaty 6s ease-in-out infinite alternate;animation-delay:var(--d,0s)}
+  @keyframes floaty{from{transform:translateY(0)}to{transform:translateY(-9px)}}
+  .reveal{opacity:0}
+  #screen-archive.active .reveal{animation:rise .75s cubic-bezier(.2,.7,.3,1) both;animation-delay:var(--d,0s)}
+  @keyframes rise{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:none}}
+  #screen-archive.active .reveal.float{animation:floaty 6s ease-in-out infinite alternate, rise .75s cubic-bezier(.2,.7,.3,1) both;animation-delay:var(--d,0s)}
+</style>
+</head>
+<body>
+<canvas id="fx"></canvas>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <linearGradient id="emg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#f2eeff"/>
+      <stop offset=".5" stop-color="#b7a6f2"/>
+      <stop offset="1" stop-color="#8b6ef5"/>
+    </linearGradient>
+    <linearGradient id="nodeC" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#8b6ef5"/>
+      <stop offset="1" stop-color="#6d4bd8"/>
+    </linearGradient>
+    <linearGradient id="nodeStroke" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#e7e0ff"/>
+      <stop offset="1" stop-color="#a57cff"/>
+    </linearGradient>
+    <symbol id="emblem" viewBox="0 0 120 120">
+      <circle cx="60" cy="60" r="57" fill="rgba(20,15,38,.5)" stroke="url(#emg)" stroke-width="2.4"/>
+      <circle cx="60" cy="60" r="50" fill="none" stroke="url(#emg)" stroke-width="1" opacity=".55"/>
+      <path d="M33 63 L49 36 L60 52 L74 31 L91 63" fill="none" stroke="url(#emg)" stroke-width="2.6" stroke-linejoin="round" stroke-linecap="round"/>
+      <path d="M33 63 H91" stroke="url(#emg)" stroke-width="1.4" opacity=".8"/>
+      <path d="M45 63 L53 50 M70 63 L62 47" stroke="url(#emg)" stroke-width="1.4" opacity=".6" stroke-linecap="round"/>
+      <text x="60" y="80" text-anchor="middle" fill="#efeaff" font-size="14" letter-spacing="4" font-family="FangSong,STFangsong,serif">连山会</text>
+      <text x="60" y="95" text-anchor="middle" fill="#b7a6f2" font-size="7.5" letter-spacing="2.4" font-family="FangSong,STFangsong,serif">LIANSHANHUI</text>
+    </symbol>
+  </defs>
+</svg>
+
+<div id="loader">
+  <div class="ring"></div>
+  <svg class="emblem"><use href="#emblem"></use></svg>
+  <p>解密中 · DECRYPTING</p>
+</div>
+
+<main class="stage">
+
+  <!-- ============ 入口 ============ -->
+  <section class="screen active" id="screen-entry">
+    <svg class="emblem"><use href="#emblem"></use></svg>
+    <p class="kicker">连山会 · 机密督查系统</p>
+    <h1 class="subject-name">
+      <span class="en">CHARLIE</span>
+      <span class="cn">查 理 苏</span>
+    </h1>
+    <p class="subject-meta">CASE NO. 0724 · NOVATEN HEIR · CLASSIFIED</p>
+    <button class="btn btn-primary" data-go="password">进 入</button>
+    <p class="hint-line">连山会内部系统 · 未经授权禁止访问</p>
+  </section>
+
+  <!-- ============ 口令验证 ============ -->
+  <section class="screen" id="screen-password">
+    <div class="auth-head">
+      <svg class="emblem small"><use href="#emblem"></use></svg>
+      <h2>身份验证</h2>
+      <p class="sub">请输入访问口令以解锁档案</p>
+    </div>
+
+    <svg class="lock" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+      <rect x="4" y="10.5" width="16" height="10" rx="2.4"/>
+      <path d="M8 10.5V7.2a4 4 0 0 1 8 0v3.3"/>
+      <circle cx="12" cy="15.5" r="1.4" fill="currentColor" stroke="none"/>
+      <path d="M12 16.8v1.6"/>
+    </svg>
+
+    <div class="field" id="field">
+      <input id="pass" type="password" placeholder="输入访问口令" autocomplete="off" spellcheck="false">
+      <button class="eye" id="eye" type="button" aria-label="显示口令">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M2 12s3.5-6.5 10-6.5S22 12 22 12s-3.5 6.5-10 6.5S2 12 2 12Z"/>
+          <circle cx="12" cy="12" r="2.6"/>
+        </svg>
+      </button>
+    </div>
+
+    <p class="pass-hint">提示：<b>英文名</b> + <b>生日</b>（小写字母，无空格）</p>
+    <button class="btn btn-primary" id="unlock">验证并解密</button>
+    <p class="err" id="err"></p>
+    <button class="btn btn-ghost" data-go="entry">返 回</button>
+  </section>
+
+  <!-- ============ 档案 ============ -->
+  <section class="screen" id="screen-archive">
+    <header class="arch-head reveal" style="--d:.02s">
+      <svg class="emblem small"><use href="#emblem"></use></svg>
+      <div class="arch-title-wrap">
+        <div class="arch-title">连山会 · 机密档案</div>
+        <div class="arch-sub">LIANSHANHUI CONFIDENTIAL DOSSIER</div>
+      </div>
+    </header>
+
+    <div class="card case-card float reveal" style="--d:.08s">
+      <div class="stamp-conf">机密</div>
+      <div class="case-top">
+        <div class="case-no">档 案 编 号：<b>LSH-0724-C</b></div>
+      </div>
+      <div class="info-row">
+        <span class="k">密级</span><span class="v hot">机密 · 内部参阅</span>
+      </div>
+      <div class="info-row">
+        <span class="k">建档日期</span><span class="v">2026.09.24</span>
+      </div>
+      <div class="info-row">
+        <span class="k">调查单位</span><span class="v">连山会 特别督查组</span>
+      </div>
+      <div class="info-row">
+        <span class="k">关注等级</span><span class="v hot">S 级 · 持续监控</span>
+      </div>
+    </div>
+
+    <div class="card photo-card float reveal" style="--d:.16s">
+      <div class="photo-frame">
+        <img src="charlie.jpg" alt="查理苏">
+        <div class="scan"></div>
+        <div class="photo-cap">影像资料 · 查理苏</div>
+      </div>
+      <div class="photo-side">
+        <div class="en">CHARLIE</div>
+        <div class="cn">查理苏</div>
+        <div class="tag-row">
+          <span class="mini-tag">人族×灵族混血</span>
+          <span class="mini-tag">真空天赋</span>
+          <span class="mini-tag hot">S级关注</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="sec-title reveal" style="--d:.22s"><i>01</i>基本档案</div>
+    <div class="card info-card float reveal" style="--d:.26s">
+      <div class="info-row">
+        <span class="k">姓名</span><span class="v">查理苏（Charlie）</span>
+      </div>
+      <div class="info-row">
+        <span class="k">生日</span><span class="v">07.24（7月24日）</span>
+      </div>
+      <div class="info-row">
+        <span class="k">年龄</span><span class="v">28 岁</span>
+      </div>
+      <div class="info-row">
+        <span class="k">身高</span><span class="v">187 cm</span>
+      </div>
+      <div class="info-row">
+        <span class="k">种族</span><span class="v">人族与<span class="hot">灵族混血</span></span>
+      </div>
+      <div class="info-row">
+        <span class="k">天赋</span><span class="v"><span class="hot">真空</span>（超能力 · 可掌握真空）</span>
+      </div>
+    </div>
+
+    <div class="sec-title reveal" style="--d:.30s"><i>02</i>身份与履历</div>
+    <div class="card float reveal" style="--d:.34s">
+      <div class="info-row" style="padding-bottom:14px">
+        <span class="k">核心身份</span>
+        <span class="v">世界四大财阀之一 <span class="hot">NOVATEN 药业集团 唯一继承人</span></span>
+      </div>
+      <div class="timeline">
+        <div class="tl-item">
+          <div class="role">实习记者</div>
+          <div class="org">早期职业经历</div>
+        </div>
+        <div class="tl-item">
+          <div class="role">瑞契尼消防救援总队 · 志愿者</div>
+          <div class="org">公益与应急救援履历</div>
+        </div>
+        <div class="tl-item">
+          <div class="role">莱索亚医疗队 · 无国界医生</div>
+          <div class="org">国际人道主义医疗援助</div>
+        </div>
+        <div class="tl-item now">
+          <div class="role">光启市第一人民医院 · 烧伤整形科外聘专家</div>
+          <div class="org">现任</div>
+          <span class="tag now">现 任</span>
+        </div>
+        <div class="tl-item now">
+          <div class="role">塞尔苏斯中心医院 · 国际援助医疗队成员</div>
+          <div class="org">现任</div>
+          <span class="tag now">现 任</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="sec-title reveal" style="--d:.38s"><i>03</i>人际网络</div>
+    <div class="card float reveal" style="--d:.42s">
+      <div class="net-wrap">
+        <svg class="net" viewBox="0 0 360 360" role="img" aria-label="查理苏亲密关系网">
+          <line class="link dead" x1="180" y1="180" x2="180" y2="64"/>
+          <line class="link blood" x1="180" y1="180" x2="298" y2="128"/>
+          <line class="link pending" x1="180" y1="180" x2="298" y2="252"/>
+          <line class="link blood" x1="180" y1="180" x2="64" y2="252"/>
+          <line class="link no-blood" x1="180" y1="180" x2="64" y2="128"/>
+
+          <g class="node">
+            <circle cx="180" cy="64" r="27" stroke="rgba(255,77,109,.75)"/>
+            <text class="n-name" x="180" y="60">羲和</text>
+            <text class="n-rel" x="180" y="74">母亲</text>
+            <text class="n-status" x="180" y="87" fill="#ff8ba0">已故</text>
+          </g>
+          <g class="node">
+            <circle cx="298" cy="128" r="27" stroke="rgba(190,175,240,.6)"/>
+            <text class="n-name" x="298" y="124">查兆澎</text>
+            <text class="n-rel" x="298" y="138">父亲</text>
+          </g>
+          <g class="node">
+            <circle cx="298" cy="252" r="30" stroke="rgba(244,184,96,.8)"/>
+            <text class="n-name" x="298" y="246">哥哥</text>
+            <text class="n-rel" x="298" y="260">名字不详</text>
+            <text class="n-status" x="298" y="274" fill="#f4b860">待调查</text>
+          </g>
+          <g class="node">
+            <circle cx="64" cy="252" r="27" stroke="rgba(190,175,240,.6)"/>
+            <text class="n-name" x="64" y="248">查理芬</text>
+            <text class="n-rel" x="64" y="262">堂姐</text>
+          </g>
+          <g class="node">
+            <circle cx="64" cy="128" r="27" stroke="rgba(190,175,240,.6)"/>
+            <text class="n-name" x="64" y="124">吉叔</text>
+            <text class="n-rel" x="64" y="138">管家</text>
+          </g>
+
+          <g class="node center">
+            <circle cx="180" cy="180" r="38"/>
+            <text class="n-name" x="180" y="176">查理苏</text>
+            <text class="n-en" x="180" y="194">CHARLIE</text>
+          </g>
+        </svg>
+        <div class="legend">
+          <span><i></i>血缘</span>
+          <span><i class="dash"></i>非血缘</span>
+          <span><i class="dead"></i>已故</span>
+          <span><i class="pending"></i>待调查</span>
+        </div>
+      </div>
+      <div class="rel-list">
+        <div class="rel-row">
+          <span class="rel-dot dead"></span>
+          <div class="rel-main">
+            <div class="rel-name">母亲 · 羲和</div>
+            <div class="rel-note">灵族 · <span class="hot">已故</span></div>
+          </div>
+        </div>
+        <div class="rel-row">
+          <span class="rel-dot"></span>
+          <div class="rel-main">
+            <div class="rel-name">父亲 · 查兆澎</div>
+            <div class="rel-note">血缘亲属</div>
+          </div>
+        </div>
+        <div class="rel-row">
+          <span class="rel-dot pending"></span>
+          <div class="rel-main">
+            <div class="rel-name">哥哥 · 名字不详</div>
+            <div class="rel-note"><span class="hot">疑似早夭</span>，仍待调查</div>
+          </div>
+        </div>
+        <div class="rel-row">
+          <span class="rel-dot"></span>
+          <div class="rel-main">
+            <div class="rel-name">堂姐 · 查理芬</div>
+            <div class="rel-note">血缘亲属</div>
+          </div>
+        </div>
+        <div class="rel-row">
+          <span class="rel-dot"></span>
+          <div class="rel-main">
+            <div class="rel-name">管家 · 吉叔</div>
+            <div class="rel-note">非血缘 · 长期随侍</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="sec-title reveal" style="--d:.46s"><i>04</i>名下产业</div>
+    <div class="card float reveal" style="--d:.50s">
+      <div style="padding:16px">
+        <div class="chips">
+          <span class="chip">房地产</span>
+          <span class="chip">游戏公司</span>
+          <span class="chip">冰场</span>
+          <span class="chip">船队</span>
+          <span class="chip">温泉庄园</span>
+          <span class="chip">甜品王国</span>
+          <span class="chip">“星城”娱乐城</span>
+        </div>
+        <p style="margin:14px 2px 0;font-size:12px;line-height:1.7;color:#9287ba">跨行业多元投资，具体股权结构与资金流向仍在核查中。</p>
+      </div>
+    </div>
+
+    <div class="sec-title reveal" style="--d:.54s"><i>05</i>调查事由</div>
+    <div class="card alert-card float reveal" style="--d:.58s">
+      <div class="alert-title"><span class="dot"></span>异常情报 · 高度关注</div>
+      <div class="info-row">
+        <span class="k">核心异常</span>
+        <span class="v">除<span class="hot">真空</span>天赋外，疑似从<span class="hot">地底势力</span>获取了新的能力</span>
+      </div>
+      <div class="info-row">
+        <span class="k">能力特征</span>
+        <span class="v">能力展现时出现<span class="hot">黑砂</span>，作用<span class="hot">未知</span></span>
+      </div>
+      <div class="info-row">
+        <span class="k">风险评估</span>
+        <span class="v">来源存疑 · 能力不明 · <span class="hot">建议持续监控</span></span>
+      </div>
+    </div>
+
+    <div class="foot reveal" style="--d:.64s">
+      连山会 · 此档案仅供内部参阅<br>
+      DOSSIER SUBJECT TO INTERNAL REVIEW
+    </div>
+  </section>
+</main>
+<script>
+  // ---------- 屏幕切换 ----------
+  var screens = document.querySelectorAll('.screen');
+  function go(id){
+    var sid = id.indexOf('screen-') === 0 ? id : 'screen-' + id;
+    screens.forEach(function(s){ s.classList.toggle('active', s.id === sid); });
+    window.scrollTo({top:0, behavior:'smooth'});
+  }
+  document.querySelectorAll('[data-go]').forEach(function(b){
+    b.addEventListener('click', function(){ go(b.dataset.go); });
+  });
+
+  // ---------- 口令验证 ----------
+  var pass = document.getElementById('pass');
+  var field = document.getElementById('field');
+  var err = document.getElementById('err');
+  var unlock = document.getElementById('unlock');
+  var loader = document.getElementById('loader');
+
+  function check(){
+    var v = (pass.value || '').trim().toLowerCase().replace(/\s+/g,'');
+    if(v === 'charlie0724'){
+      err.textContent = '';
+      loader.classList.add('show');
+      unlock.textContent = '解密中…';
+      setTimeout(function(){
+        loader.classList.remove('show');
+        unlock.textContent = '验证并解密';
+        go('archive');
+      }, 1050);
+    } else {
+      err.textContent = '口令错误，请核对英文名与生日';
+      field.classList.remove('shake');
+      void field.offsetWidth;
+      field.classList.add('shake');
+      pass.select();
+    }
+  }
+  unlock.addEventListener('click', check);
+  pass.addEventListener('keydown', function(e){ if(e.key === 'Enter'){ check(); } });
+
+  document.getElementById('eye').addEventListener('click', function(){
+    pass.type = pass.type === 'password' ? 'text' : 'password';
+  });
+
+  // ---------- 浮动粒子（银紫光尘 + 黑砂） ----------
+  var canvas = document.getElementById('fx');
+  var ctx = canvas.getContext('2d');
+  var W = 0, H = 0, dpr = Math.min(window.devicePixelRatio || 1, 2);
+  function resize(){
+    W = canvas.width = Math.floor(innerWidth * dpr);
+    H = canvas.height = Math.floor(innerHeight * dpr);
+  }
+  resize();
+  window.addEventListener('resize', resize);
+
+  var parts = [];
+  var count = 84;
+  for(var i=0;i<count;i++){
+    parts.push({
+      x: Math.random() * (innerWidth * dpr),
+      y: Math.random() * (innerHeight * dpr),
+      vx: (Math.random() - .5) * .22 * dpr,
+      vy: (Math.random() - .5) * .22 * dpr,
+      r: (Math.random() * 1.5 + .4) * dpr,
+      silver: Math.random() > .6,
+      a: Math.random() * .45 + .18
+    });
+  }
+  function tick(){
+    ctx.clearRect(0,0,W,H);
+    for(var j=0;j<parts.length;j++){
+      var p = parts[j];
+      p.x += p.vx; p.y += p.vy;
+      if(p.x < -10) p.x = W + 10; else if(p.x > W + 10) p.x = -10;
+      if(p.y < -10) p.y = H + 10; else if(p.y > H + 10) p.y = -10;
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, p.r, 0, 6.2832);
+      if(p.silver){
+        ctx.fillStyle = 'rgba(214,196,255,' + p.a + ')';
+        ctx.shadowColor = 'rgba(170,130,255,.85)';
+        ctx.shadowBlur = 7 * dpr;
+      } else {
+        ctx.fillStyle = 'rgba(46,38,68,' + (p.a + .12) + ')';
+        ctx.shadowColor = 'rgba(160,120,255,.35)';
+        ctx.shadowBlur = 4 * dpr;
+      }
+      ctx.fill();
+    }
+    ctx.shadowBlur = 0;
+    requestAnimationFrame(tick);
+  }
+  tick();
+</script>
+</body>
+</html>
