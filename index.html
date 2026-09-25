@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#0a0714">
 <title>连山会 · 查理苏调查档案</title>
+<link rel="stylesheet" href="app.css">
 <style>
   :root{
     --bg:#08060f;
@@ -396,8 +397,13 @@
     </div>
 
     <p class="pass-hint">提示：<b>英文名</b> + <b>生日</b>（小写字母，无空格）</p>
+    <label class="remember-row">
+      <input type="checkbox" id="remember-pass">
+      <span>记住密码，下次自动进入档案</span>
+    </label>
     <button class="btn btn-primary" id="unlock">验证并解密</button>
     <p class="err" id="err"></p>
+    <div class="remember-actions"><button type="button" class="link-btn" id="forget-pass" style="display:none">清除已记住的密码</button></div>
     <button class="btn btn-ghost" data-go="entry">返 回</button>
   </section>
 
@@ -408,6 +414,17 @@
       <div class="arch-title-wrap">
         <div class="arch-title">连山会 · 机密档案</div>
         <div class="arch-sub">LIANSHANHUI CONFIDENTIAL DOSSIER</div>
+      </div>
+      <div class="arch-actions">
+        <button class="icon-btn" id="clue-btn" type="button" aria-label="线索收纳区" title="线索收纳区">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="3.5" y="5.5" width="17" height="13" rx="2"/><path d="m4 7 8 6 8-6"/></svg>
+        </button>
+        <button class="icon-btn" id="bird-btn" type="button" aria-label="督查助手" title="督查助手">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 17c4 0 4-4 8-4s4 4 8 4"/><path d="M7 9h10"/><circle cx="10" cy="6" r="1"/><circle cx="14" cy="6" r="1"/></svg>
+        </button>
+        <button class="icon-btn" id="reset-btn" type="button" aria-label="重置进度" title="重置进度">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M20 7v5h-5"/><path d="M4.5 12a7.5 7.5 0 0 1 12.8-5.3L20 12"/><path d="M4 17v-5h5"/><path d="M19.5 12a7.5 7.5 0 0 1-12.8 5.3L4 12"/></svg>
+        </button>
       </div>
     </header>
 
@@ -431,7 +448,7 @@
     </div>
 
     <div class="card photo-card float reveal" style="--d:.16s">
-      <div class="photo-frame">
+      <div class="photo-frame" id="photo-avatar" data-go="cards" role="button" tabindex="0" aria-label="打开卡面收纳册">
         <img src="charlie.jpg" alt="查理苏">
         <div class="scan"></div>
         <div class="photo-cap">影像资料 · 查理苏</div>
@@ -440,8 +457,8 @@
         <div class="en">CHARLIE</div>
         <div class="cn">查理苏</div>
         <div class="tag-row">
-          <span class="mini-tag">人族×灵族混血</span>
-          <span class="mini-tag">真空天赋</span>
+          <span class="mini-tag" data-kw="mixed-blood">人族×灵族混血</span>
+          <span class="mini-tag" data-kw="vacuum">真空天赋</span>
           <span class="mini-tag hot">S级关注</span>
         </div>
       </div>
@@ -453,7 +470,7 @@
         <span class="k">姓名</span><span class="v">查理苏（Charlie）</span>
       </div>
       <div class="info-row">
-        <span class="k">生日</span><span class="v">07.24（7月24日）</span>
+        <span class="k">生日</span><span class="v" data-kw="birthday">07.24（7月24日）</span>
       </div>
       <div class="info-row">
         <span class="k">年龄</span><span class="v">28 岁</span>
@@ -462,10 +479,10 @@
         <span class="k">身高</span><span class="v">187 cm</span>
       </div>
       <div class="info-row">
-        <span class="k">种族</span><span class="v">人族与<span class="hot">灵族混血</span></span>
+        <span class="k">种族</span><span class="v">人族与<span data-kw="mixed-blood">灵族混血</span></span>
       </div>
       <div class="info-row">
-        <span class="k">天赋</span><span class="v"><span class="hot">真空</span>（超能力 · 可掌握真空）</span>
+        <span class="k">天赋</span><span class="v"><span data-kw="vacuum">真空</span>（超能力 · 可掌握真空）</span>
       </div>
     </div>
 
@@ -473,7 +490,7 @@
     <div class="card float reveal" style="--d:.34s">
       <div class="info-row" style="padding-bottom:14px">
         <span class="k">核心身份</span>
-        <span class="v">世界四大财阀之一 <span class="hot">NOVATEN 药业集团 唯一继承人</span></span>
+        <span class="v">世界四大财阀之一 <span data-kw="novaten">NOVATEN 药业集团 唯一继承人</span></span>
       </div>
       <div class="timeline">
         <div class="tl-item">
@@ -489,7 +506,7 @@
           <div class="org">国际人道主义医疗援助</div>
         </div>
         <div class="tl-item now">
-          <div class="role">光启市第一人民医院 · 烧伤整形科外聘专家</div>
+          <div class="role" data-kw="visiting-expert">光启市第一人民医院 · 烧伤整形科外聘专家</div>
           <div class="org">现任</div>
           <span class="tag now">现 任</span>
         </div>
@@ -595,7 +612,7 @@
     <div class="card float reveal" style="--d:.50s">
       <div style="padding:16px">
         <div class="chips">
-          <span class="chip">房地产</span>
+          <span class="chip" data-kw="real-estate">房地产</span>
           <span class="chip">游戏公司</span>
           <span class="chip">冰场</span>
           <span class="chip">船队</span>
@@ -612,11 +629,11 @@
       <div class="alert-title"><span class="dot"></span>异常情报 · 高度关注</div>
       <div class="info-row">
         <span class="k">核心异常</span>
-        <span class="v">除<span class="hot">真空</span>天赋外，疑似从<span class="hot">地底势力</span>获取了新的能力</span>
+        <span class="v">除<span data-kw="vacuum">真空</span>天赋外，疑似从<span data-kw="underworld">地底势力</span>获取了新的能力</span>
       </div>
       <div class="info-row">
         <span class="k">能力特征</span>
-        <span class="v">能力展现时出现<span class="hot">黑砂</span>，作用<span class="hot">未知</span></span>
+        <span class="v">能力展现时出现<span data-kw="black-sand">黑砂</span>，作用<span class="hot">未知</span></span>
       </div>
       <div class="info-row">
         <span class="k">风险评估</span>
@@ -627,9 +644,76 @@
     <div class="foot reveal" style="--d:.64s">
       连山会 · 此档案仅供内部参阅<br>
       DOSSIER SUBJECT TO INTERNAL REVIEW
+      <div class="version-line">当前版本 v1.1.0 · <a href="https://github.com/DaiXu107/charlie-case/releases" target="_blank" rel="noreferrer">查看历史版本</a></div>
     </div>
   </section>
+
+  <!-- ============ 卡面收纳册 ============ -->
+  <section class="screen" id="screen-cards">
+    <div class="sub-screen">
+      <div class="sub-head">
+        <button class="sub-back" id="cards-back" type="button" aria-label="返回档案">‹</button>
+        <div class="sub-title">卡面收纳册</div>
+        <div class="sub-count" id="cards-count">0 / 0</div>
+      </div>
+      <div class="card-grid" id="cards-grid"></div>
+    </div>
+  </section>
+
+  <!-- ============ 关键词聊天式故事 ============ -->
+  <section class="screen" id="screen-chat">
+    <div class="sub-screen">
+      <div class="sub-head">
+        <button class="sub-back" id="chat-back" type="button" aria-label="退出聊天">‹</button>
+        <div class="sub-title">线索对话</div>
+      </div>
+      <div class="chat-shell">
+        <div class="chat-top">
+          <div class="chat-avatar-wrap" id="chat-avatar-wrap">
+            <img id="chat-avatar" src="charlie.jpg" alt="对方头像">
+            <span class="collect-hint">点击拍照</span>
+          </div>
+          <div class="chat-who">
+            <b id="chat-name">查理苏</b>
+            <span id="chat-sub">档案对象</span>
+          </div>
+        </div>
+        <div class="chat-log" id="chat-log"></div>
+        <div class="chat-inputbar">
+          <input id="chat-input" type="text" placeholder="输入消息…" autocomplete="off" disabled>
+          <button class="chat-send" id="chat-send" type="button" disabled>发送</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ 线索收纳区 ============ -->
+  <section class="screen" id="screen-clues">
+    <div class="sub-screen">
+      <div class="sub-head">
+        <button class="sub-back" id="clues-back" type="button" aria-label="返回档案">‹</button>
+        <div class="sub-title">线索收纳区</div>
+      </div>
+      <div class="clue-stage" id="clue-stage"></div>
+      <div class="clue-hint">拖动线索纸条靠近彼此，可以尝试拼合。已收集的关键词会自动出现在这里。</div>
+      <div class="combo-log" id="combo-log"></div>
+    </div>
+  </section>
+
+  <!-- ============ 重置确认弹窗 ============ -->
+  <div class="modal-backdrop" id="reset-modal" role="dialog" aria-modal="true" aria-labelledby="reset-title">
+    <div class="modal-card">
+      <div class="modal-title" id="reset-title">确认重置进度？</div>
+      <div class="modal-text">将清除已收集关键词、卡面、已解锁组合和生成关键词。此操作不可撤销。</div>
+      <div class="modal-actions">
+        <button class="modal-cancel" id="reset-cancel" type="button">取消</button>
+        <button class="modal-confirm" id="reset-confirm" type="button">确认重置</button>
+      </div>
+    </div>
+  </div>
 </main>
+<script src="config.js"></script>
+<script src="storage.js"></script>
 <script>
   // ---------- 屏幕切换 ----------
   var screens = document.querySelectorAll('.screen');
@@ -649,10 +733,14 @@
   var unlock = document.getElementById('unlock');
   var loader = document.getElementById('loader');
 
+  var expectedPassword = (window.APP_CONFIG && window.APP_CONFIG.password) ? window.APP_CONFIG.password : 'charlie0724';
+
   function check(){
     var v = (pass.value || '').trim().toLowerCase().replace(/\s+/g,'');
-    if(v === 'charlie0724'){
+    if(v === expectedPassword){
       err.textContent = '';
+      var rememberBox = document.getElementById('remember-pass');
+      if (window.savePasswordPreference) window.savePasswordPreference(rememberBox ? rememberBox.checked : false);
       loader.classList.add('show');
       unlock.textContent = '解密中…';
       setTimeout(function(){
@@ -724,5 +812,6 @@
   }
   tick();
 </script>
+<script src="app.js"></script>
 </body>
 </html>
